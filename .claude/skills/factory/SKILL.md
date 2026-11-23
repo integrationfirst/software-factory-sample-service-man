@@ -150,6 +150,11 @@ finished:
 A job is finished for this run when it reaches `merged`, `rejected`,
 `needs-info` or `needs-human`.
 
+`factory/bin/job` notifies the operator on Telegram (`factory/bin/notify`)
+whenever a job moves to `needs-info` or `needs-human`. When you stop a job
+yourself and need the user (for example a script refused twice), notify them
+too: `echo "Factory: <job-id> (#<n>) stopped: <why, one line>. Open Claude Code to continue." | factory/bin/notify`.
+
 A person can merge a job's PR by hand at any stage. `factory/bin/job queue`
 then moves the job to `merged`; stop any agents still running for it.
 

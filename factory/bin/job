@@ -341,6 +341,34 @@ def escalate(job, why):
     (job_dir(job["id"]) / "decision.md").write_text(f"ESCALATE\n\n## Why\n{why}\n")
 
 
+def notify(job, stage):
+    """Tell the operator on Telegram that a job now waits on a person. Best-effort."""
+    d = job_dir(job["id"])
+    head = f"Factory: {job['id']} (#{job['issue']} {job['title']})"
+    if stage == "needs-info":
+        intake = d / "intake.md"
+        detail = (section(intake, "Questions") if intake.exists() else None) or "See the intake comment on the issue."
+        text = (f"{head} needs input from the issue's author.\n\n{detail}\n\n"
+                f"Issue: {job['issue_url']}\n"
+                f"Answer on the issue, or tell Claude: /factory <answer for #{job['issue']}>")
+    else:
+        decision = d / "decision.md"
+        detail = None
+        if decision.exists():
+            detail = (section(decision, "For the human") or section(decision, "Why")
+                      or decision.read_text().split("\n", 1)[-1].strip())
+        link = f"PR #{job['pr']}: {job['pr_url']}" if job["pr"] else f"Issue: {job['issue_url']}"
+        action = ("Merge the PR to approve it, or tell Claude: /factory <feedback>"
+                  if job["pr"] else "Tell Claude: /factory <what to do>")
+        text = f"{head} needs a human.\n\n{detail or 'See decision.md.'}\n\n{link}\n{action}"
+    try:
+        res = subprocess.run([str(BIN / "notify")], input=text, capture_output=True, text=True, timeout=30)
+        if res.stderr.strip():
+            print(res.stderr.strip(), file=sys.stderr)
+    except Exception as e:
+        print(f"notify: not sent: {e}", file=sys.stderr)
+
+
 def git(job, *args, check=True):
     return run(["git", *args], cwd=job["worktree"], check=check)
 
@@ -503,6 +531,8 @@ def advance(job, stage):
 
     job["stage"] = stage
     job["ended"] = now() if stage in TERMINAL | WAITING else None
+    if stage in WAITING:
+        notify(job, stage)
     return job
 
 

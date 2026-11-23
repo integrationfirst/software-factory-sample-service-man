@@ -47,6 +47,13 @@ intake → spec → build → gate → review → approve, one PR per issue. Sta
 `factory/checks.sh`. Dashboard: `cd factory && python3 -m http.server`, then
 open http://localhost:8000/dashboard.html.
 
+When a job needs input (`needs-info`) or a human decision (`needs-human`),
+`factory/bin/notify` sends a Telegram message. It uses
+`FACTORY_TELEGRAM_BOT_TOKEN` and `FACTORY_TELEGRAM_CHAT_ID`, or falls back to
+the Claude Code Telegram plugin's bot and its single allowlisted user. Test it
+with `factory/bin/notify --test`; turn it off with `notify.telegram` in
+`factory/config.json`.
+
 Each job works in its own git worktree, a full checkout of the repo at
 `.worktrees/<job-id>` (gitignored). A tool run from the repo root that doesn't
 read `.gitignore` sees those copies too; exclude `.worktrees/` in its config.
