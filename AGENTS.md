@@ -4,28 +4,40 @@ A simple internal web app for managing the organization's services (IT, HR,
 Office and similar). Through a GUI, staff list, create, update and retire
 services.
 
-The repo has no application code yet: the stack, framework and layout are
-still to be chosen. Whoever scaffolds the app must update this file with the
-real commands below and the location of the design tokens / theme and shared
-components.
+The app is a single-page app built with Vite, React and TypeScript (strict
+mode), styled with Tailwind CSS v4 and tested with Vitest and React Testing
+Library. Dependencies are managed with npm.
+
+## Layout
+
+- Theme (design tokens): the `@theme` block in `src/index.css`. Use its tokens
+  (`bg-brand-700`, `text-text-muted`, `font-sans`, ...) instead of raw values.
+- Shared components: `src/components/`.
+- Pages: `src/pages/`.
+- Tests sit next to the code they cover, as `*.test.tsx`. The test setup is
+  `src/test/setup.ts`.
 
 ## Setup
 
 A fresh checkout needs:
 
-- TODO: install dependencies (e.g. `npm ci`)
-- TODO: env files to copy (e.g. `cp .env.example .env`)
+- `npm ci`
+
+No env files are needed.
 
 ## Dev server
 
-TODO: how to start it on a given port, e.g. `PORT=<port> npm run dev`.
+`npm run dev -- --port <port>`. It uses a strict port: when the port is busy
+it exits with an error instead of moving to another port.
 
 ## Validation
 
-`bash factory/checks.sh` runs every check and must exit 0. Until the stack is
-fixed it detects it: for Node, the `lint`, `typecheck`, `test` and `build`
-package scripts (with a committed lockfile); for Python, `ruff`, `mypy` and
-`pytest`. Any new project must expose its checks in one of those forms.
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
+
+`bash factory/checks.sh` runs every check and must exit 0.
 
 ## Software factory
 
