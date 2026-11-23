@@ -1,3 +1,6 @@
 /factory/jobs/
 /.worktrees/
 /.venv-checks/
+node_modules/
+dist/
+coverage/
