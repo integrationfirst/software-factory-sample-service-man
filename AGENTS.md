@@ -16,6 +16,24 @@ Library. Dependencies are managed with npm.
 - Pages: `src/pages/`.
 - Tests sit next to the code they cover, as `*.test.tsx`. The test setup is
   `src/test/setup.ts`.
+- Section registry: `src/sections.ts`. Its `sections` array drives both the
+  sidebar links and the routes in `src/App.tsx`.
+- App frame: `src/components/AppLayout.tsx` (header, sidebar and `<main>`),
+  `src/components/Sidebar.tsx` (the `<nav aria-label="Main">`) and
+  `src/components/Header.tsx` (top bar with the phone menu button).
+- Unknown URLs render `src/pages/NotFoundPage.tsx` inside the frame.
+- `src/main.tsx` wraps `App` in `BrowserRouter`; tests render `App` under a
+  `MemoryRouter` with `initialEntries`.
+
+### Adding a section
+
+1. Create the page in `src/pages/`.
+2. Add one entry to `sections` in `src/sections.ts`: `label`, `path`,
+   `component` and an optional `icon`. The sidebar link and the route follow
+   from it; don't hard-code the label, path or page anywhere else.
+3. Add a test for the page next to it.
+
+The first entry is where `/` redirects, and where the not-found page links.
 
 ## Setup
 
