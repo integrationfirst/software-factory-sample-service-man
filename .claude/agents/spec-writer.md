@@ -80,5 +80,6 @@ The approver escalates to a human when one of these is a product decision.
   runner and the behaviour can be tested.
 - Never require a change to a file matching `protected_paths` in
   `factory/config.json`: the gate fails any branch that modifies one.
+- If not indicated in the requirement, then use the skill `simpson-strong-tie-brand` to pick a placeholder brand colour and font for the new feature. The approver escalates to a human if the placeholder is not acceptable.
 
 When you're done, reply with one line: `SPEC: <short title>`.

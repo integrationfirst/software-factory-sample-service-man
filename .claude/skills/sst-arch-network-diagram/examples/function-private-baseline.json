@@ -1,0 +1,42 @@
+{
+  "title": "Azure Functions with private inbound and outbound networking",
+  "name": "Functions private baseline",
+  "page": {
+    "width": 1420,
+    "height": 960
+  },
+  "elements": [
+    { "type": "icon", "id": "client", "icon": "users", "label": "Client", "labelPos": "bottom", "x": 60, "y": 199.5, "w": 46, "h": 46 },
+    { "type": "vnet", "id": "vnet", "cidr": "10.0.0.0/16", "x": 300, "y": 80, "w": 900, "h": 560 },
+    { "type": "subnet", "id": "snAgw", "label": "Application Gateway subnet", "cidr": "10.0.1.0/24", "x": 320, "y": 100, "w": 260, "h": 290 },
+    { "type": "subnet", "id": "snInt", "label": "Function integration subnet", "cidr": "10.0.3.0/27", "note": "delegated to\nMicrosoft.App/environments", "x": 320, "y": 430, "w": 260, "h": 190 },
+    { "type": "subnet", "id": "snPe", "label": "Private endpoint subnet", "cidr": "10.0.2.0/24", "x": 600, "y": 100, "w": 580, "h": 520 },
+    { "type": "tile", "id": "agw", "label": "Application Gateway\nWAF v2", "icon": "appgw", "x": 390, "y": 170 },
+    { "type": "tile", "id": "vnic", "label": "Virtual interface", "icon": "nic", "x": 390, "y": 500 },
+    { "type": "tile", "id": "peFn", "label": "Function app\nprivate endpoint", "icon": "pe", "x": 620, "y": 170, "w": 115 },
+    { "type": "tile", "id": "peKv", "label": "Key Vault\nprivate endpoint", "icon": "pe", "x": 760, "y": 500, "w": 115 },
+    { "type": "tile", "id": "peSt", "label": "Storage\nprivate endpoints", "icon": "pe", "x": 900, "y": 500, "w": 115 },
+    { "type": "tile", "id": "peSql", "label": "SQL Database\nprivate endpoint", "icon": "pe", "x": 1040, "y": 500, "w": 115 },
+    { "type": "tile", "id": "fn", "variant": "paas", "label": "Azure Functions\nFlex Consumption plan", "icon": "function", "iconSize": 60, "x": 40, "y": 467, "w": 220, "h": 171, "badge": {"icon": "identity", "label": "Managed\nidentity"} },
+    { "type": "tile", "id": "kv", "variant": "paas", "label": "Azure Key Vault", "icon": "keyvault", "x": 760, "y": 700, "w": 115, "h": 100 },
+    { "type": "tile", "id": "st", "variant": "paas", "label": "Azure Storage\nhost storage", "icon": "storage", "x": 900, "y": 700, "w": 115, "h": 100 },
+    { "type": "tile", "id": "sql", "variant": "paas", "label": "Azure SQL\nDatabase", "icon": "sql", "x": 1040, "y": 700, "w": 115, "h": 100 },
+    { "type": "tile", "id": "dns", "variant": "paas", "label": "Private DNS zones\n(linked to VNet)", "icon": "dns", "x": 1230, "y": 100, "w": 130, "h": 100 },
+    { "type": "edge", "from": "client", "to": "agw", "exit": "right", "entry": "left" },
+    { "type": "edge", "from": "agw", "to": "peFn", "exit": "right", "entry": "left" },
+    { "type": "edge", "from": "peFn", "to": "fn", "exit": "bottom", "entry": "top", "points": [[677.5,410],[150,410]] },
+    { "type": "edge", "from": "fn", "to": "vnic", "exit": "right", "entry": "left" },
+    { "type": "edge", "from": "vnic", "to": "snPe", "exit": "right", "entry": [0,0.8702] },
+    { "type": "edge", "from": "peKv", "to": "kv", "exit": "bottom", "entry": "top" },
+    { "type": "edge", "from": "peSt", "to": "st", "exit": "bottom", "entry": "top" },
+    { "type": "edge", "from": "peSql", "to": "sql", "exit": "bottom", "entry": "top" },
+    { "type": "marker", "kind": "inbound", "n": 1, "x": 200, "y": 194 },
+    { "type": "marker", "kind": "inbound", "n": 2, "x": 555, "y": 194 },
+    { "type": "marker", "kind": "inbound", "n": 3, "x": 268, "y": 383 },
+    { "type": "marker", "kind": "outbound", "n": 1, "x": 270, "y": 525 },
+    { "type": "marker", "kind": "outbound", "n": 2, "x": 545, "y": 525 },
+    { "type": "marker", "kind": "outbound", "n": 3, "x": 830, "y": 655 },
+    { "type": "legend", "x": 40, "y": 820 },
+    { "type": "steps", "x": 300, "y": 810, "w": 1060, "inbound": ["The client calls the public IP of Application Gateway; the WAF inspects the request.", "Application Gateway forwards to the function app's private endpoint (public network access is disabled on the app).", "The request reaches the Functions host, which runs outside the VNet."], "outbound": ["All outbound traffic from the function leaves through VNet integration (a virtual interface in the delegated subnet).", "Private DNS resolves the PaaS host names to private endpoint IPs in the private endpoint subnet.", "Traffic reaches Key Vault, Storage and SQL Database over Private Link, authenticated with the managed identity."] }
+  ]
+}
