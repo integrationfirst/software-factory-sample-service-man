@@ -1,13 +1,18 @@
-import Header from './components/Header.tsx'
-import ServicesPage from './pages/ServicesPage.tsx'
+import { Navigate, Route, Routes } from 'react-router'
+import AppLayout from './components/AppLayout.tsx'
+import NotFoundPage from './pages/NotFoundPage.tsx'
+import { sections } from './sections.ts'
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-surface font-sans text-text">
-      <Header />
-      <main className="mx-auto max-w-5xl px-6 py-8">
-        <ServicesPage />
-      </main>
-    </div>
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<Navigate to={sections[0].path} replace />} />
+        {sections.map(({ path, component: Page }) => (
+          <Route key={path} path={path} element={<Page />} />
+        ))}
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   )
 }
